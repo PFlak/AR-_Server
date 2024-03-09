@@ -1,0 +1,6 @@
+
+
+export const APPLICATION_CONFIG = {
+    DEBUG_REQUEST: true,
+    APPLICATION_PORT: 8080,
+};
