@@ -129,3 +129,4 @@ package-lock.json
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+src/utils/configs/automatyzacjaregat-firebase-adminsdk-e5evl-3c305646f0.json
