@@ -8,6 +8,7 @@ import { Debugger } from "./utils/debugger";
 import LoggerHelper from "./utils/logger";
 import * as http from "http";
 import cors from "cors";
+import { initalizeFirebase } from "./firebase";
 
 export class MainApp {
 
@@ -17,23 +18,28 @@ export class MainApp {
     private server!: http.Server;
     private logger!: Logger;
 
-    constructor(){
+    constructor() {
         this.init();
     }
 
-    private init(): void{
+    private init(): void {
 
         this.initLogger();
         this.initApplcationConfig();
+        this.initFirebase();
         this.initApplicationAndServer();
         this.initBasicDebug();
         this.initRoutes();
-    
+
         this.startServer();
     }
 
     private initLogger(): void {
         this.logger = LoggerHelper.getLogger("MainApp");
+    }
+
+    private initFirebase(): void {
+        initalizeFirebase();
     }
 
     private initApplcationConfig(): void {
