@@ -26,7 +26,6 @@ export class MainApp {
 
         this.initLogger();
         this.initApplcationConfig();
-        this.initFirebase();
         this.initApplicationAndServer();
         this.initBasicDebug();
         this.initRoutes();
@@ -36,10 +35,6 @@ export class MainApp {
 
     private initLogger(): void {
         this.logger = LoggerHelper.getLogger("MainApp");
-    }
-
-    private initFirebase(): void {
-        initalizeFirebase();
     }
 
     private initApplcationConfig(): void {
