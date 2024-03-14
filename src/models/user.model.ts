@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-export const UserRole = z.union([z.literal("USER"), z.literal("ADMIN")], {
+const userRole = z.union([z.literal("USER"), z.literal("ADMIN")], {
   required_error: "role is required",
 });
 
-export const User = z.object({
+const userSchema = z.object({
   user_id: z.string({ required_error: "user_id is required" }),
-  nick: z.string({ required_error: "nick is required" }),
-  role: UserRole,
+  nick: z.string({ required_error: "nick is required" }).min(4),
+  role: userRole,
   email: z.string({ required_error: "email is required" }).email(),
   name: z.string().optional(),
   surname: z.string().optional(),
