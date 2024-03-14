@@ -14,3 +14,5 @@ const userSchema = z.object({
   profil_image: z.string().optional(),
   creation_time: z.date().optional(),
 });
+
+export type User = z.infer<typeof userSchema>;
