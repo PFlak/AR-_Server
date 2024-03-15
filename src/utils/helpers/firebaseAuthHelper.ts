@@ -1,4 +1,4 @@
-import admin from "../firebase/index";
+var admin = require('../../firebase/index')
 
 async function verifyToken(token: string) {
   try {
