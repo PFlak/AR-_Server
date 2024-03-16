@@ -1,28 +1,63 @@
-import verifyToken from "../utils/helpers/firebaseAuthHelper";
-import type { Request, Response, NextFunction } from "express";
-
-type CustomRequest = Request & { user: string };
+import type { AuthorizedRequest } from "../models/request.models";
+import type { Response, NextFunction } from "express";
+import type { Logger } from "../models/common.models";
+import { internalServerErrorResponse } from "../utils/errors/internalServerError.error";
+import { FirebaseHelper } from "../utils/helpers/firebaseHelper";;
+import LoggerHelper from "../utils/logger";
+import { InvalidTokenError } from "../utils/errors/errors.error";
+import { ErrorWithCode } from "../common/common.error.config";
 
 class AuthMiddleware {
-  async decodeToken(req: CustomRequest, res: Response, next: NextFunction) {
-    let token: string;
-    try {
-      token = req.headers.authorization!.split(" ")[1];
-    } catch (error) {
-      return res.status(401).json({ message: "Unauthorized" });
+
+    private logger!: Logger;
+
+    constructor(){
+        this.init();
     }
 
-    try {
-      const decodedValue = await verifyToken(token);
-      if (decodedValue) {
-        req.user = decodedValue;
-        return next();
-      }
-      return res.status(401).json({ message: "Unauthorized" });
-    } catch (error) {
-      return res.status(500).json({ message: "Internal Server Error" });
+    private init(): void{
+
+        this.initLogger();
     }
-  }
+
+    private initLogger(): void{
+
+        this.logger = LoggerHelper.getLogger("AuthMiddleware");
+    }
+
+    async verifyUserMiddleware(req: AuthorizedRequest, res: Response, next: NextFunction) {
+        try {
+            const token = req.headers.authorization!.split(" ")[1] as string;
+
+            if(!token){
+                throw new InvalidTokenError()
+            }
+
+            //TODO should implement correct type
+            const decodedValue = await FirebaseHelper.verifyToken(token) as unknown as any;
+
+            if (!decodedValue) {
+                throw new InvalidTokenError();
+            }
+            
+            req.user = decodedValue;
+            next();
+        } catch (error) {
+
+            if(error instanceof ErrorWithCode){
+
+                this.logger.fatal("Invalid Token");
+
+                return res.status(error.status).json(error.toJSON());
+            }
+    
+            this.logger.fatal("Internal Server Error at middleware!");
+
+            return internalServerErrorResponse(res);
+        }
+    }
 }
 
-export default new AuthMiddleware();
+const instance = new AuthMiddleware();
+
+export default instance;
