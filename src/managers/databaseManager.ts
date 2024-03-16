@@ -1,5 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
-import { FirebaseHelper } from "../utils/helpers/firebaseHelper";
+import { FirebaseHelper } from "../utils/firebase/firebaseHelper";
 import { initalizeFirebase } from "../firebase";
 import { DatabaseManagerConfig } from "../utils/configs/databaseManagerConfig";
 import { Collection, CollectionsList, RecordValue } from "../models/databaseManager.models";
@@ -109,6 +109,26 @@ class DatabaseManager {
         } catch (error) {
             this.logger.error(error);
             return null;
+        }
+    }
+
+    public async deleteRecord(
+        collectionName: keyof CollectionsList,
+        recordID: string,
+        recordValue: RecordValue
+    ): Promise<void> {
+        try {
+            const collection = await this.getCollection(collectionName);
+
+            const record = await collection
+                .where(recordID, "==", recordValue)
+                .get();
+
+            record.forEach(async (doc) => {
+                await doc.ref.delete();
+            });
+        } catch (error) {
+            this.logger.error(error);
         }
     }
 }

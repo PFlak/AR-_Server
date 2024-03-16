@@ -2,7 +2,7 @@ import type { AuthorizedRequest } from "../models/request.models";
 import type { Response, NextFunction } from "express";
 import type { Logger } from "../models/common.models";
 import { internalServerErrorResponse } from "../utils/errors/internalServerError.error";
-import { FirebaseHelper } from "../utils/helpers/firebaseHelper";;
+import { FirebaseHelper } from "../utils/firebase/firebaseHelper";;
 import LoggerHelper from "../utils/logger";
 import { InvalidTokenError } from "../utils/errors/errors.error";
 import { ErrorWithCode } from "../common/common.error.config";
