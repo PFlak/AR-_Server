@@ -11,12 +11,12 @@ export class ExampleRoute extends CommonRoutesConfig {
 
     configureRoute(): Application {
         
-        const exampleRouter = express.Router();
+        const authRouter = express.Router();
 
-        exampleRouter.post('/login', loginController);
-        exampleRouter.post('/register', registerController);
+        authRouter.post('/login', loginController);
+        authRouter.post('/register', registerController);
 
-        this.app.use('/auth', exampleRouter);
+        this.app.use('/auth', authRouter);
 
         return this.getApp();
     }
