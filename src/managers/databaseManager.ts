@@ -1,5 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
-import { FirebaseHelper } from "../utils/firebase/firebaseHelper";
+import { FirebaseHelper } from "../utils/helpers/firebaseHelper";
 import { initalizeFirebase } from "../firebase";
 import { DatabaseManagerConfig } from "../utils/configs/databaseManagerConfig";
 import { Collection, CollectionsList, RecordValue } from "../models/databaseManager.models";

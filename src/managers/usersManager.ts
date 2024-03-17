@@ -1,7 +1,6 @@
 import { UserNotFoundError } from "../utils/errors/errors.error";
 import DatabaseManager from "./databaseManager";
-import { CollectionNames } from "../utils/firebase/collectionNames";
-import { USER_FIELDS } from "../utils/firebase/userFields";
+import { COLLECTION_NAMES } from "../models/databaseManager.models";
 import { User } from "../models/user.model";
 import { Logger } from "../models/common.models";
 import LoggerHelper from "../utils/logger";
@@ -26,8 +25,8 @@ class UsersManager {
     public async getUser(user_id: string): Promise<User | null> {
         try {
             const userData = await DatabaseManager.getRecordById<User>(
-                CollectionNames.COLLECTION_NAMES.USERS_COLLECTIONS,
-                USER_FIELDS.user_id,
+                COLLECTION_NAMES.USERS_COLLECTIONS,
+                "user_id",
                 user_id
             );
 
@@ -51,7 +50,7 @@ class UsersManager {
                 const updatedUserData = { ...userData, ...newData };
 
                 await DatabaseManager.addRecord(
-                    CollectionNames.COLLECTION_NAMES.USERS_COLLECTIONS,
+                    COLLECTION_NAMES.USERS_COLLECTIONS,
                     updatedUserData
                 );
 
@@ -72,8 +71,8 @@ class UsersManager {
 
             if (userData) {
                 await DatabaseManager.deleteRecord(
-                    CollectionNames.COLLECTION_NAMES.USERS_COLLECTIONS,
-                    USER_FIELDS.user_id,
+                    COLLECTION_NAMES.USERS_COLLECTIONS,
+                    "user_id",
                     user_id
                 );
 
