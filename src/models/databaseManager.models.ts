@@ -11,4 +11,4 @@ export type CollectionsList = {
 export const COLLECTION_NAMES: Record<string, keyof CollectionsList> = {
     USERS_COLLECTIONS: "USERS_COLLECTIONS",
     COMPETITIONS_COLLECTIONS: "COMPETITIONS_COLLETIONS",
-};
+}
