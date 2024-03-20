@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { CommonRoutesConfig } from "../common/common.routes.config";
+import { internalServerErrorResponse } from "../utils/errors/internalServerError.error";
 import CompetitionManager from "../managers/competitionManager";
+import { ErrorWithCode } from "../common/common.error.config";
+import { CompetitionNotFoundError } from "../utils/errors/errors.error";
 
 export const getSpecificCompetitionHandler = async (
     req: Request,
@@ -11,7 +14,7 @@ export const getSpecificCompetitionHandler = async (
         const competition_id = req.params.id;
 
         const competitionData = await CompetitionManager.getCompetition(competition_id);
-        
+
         if (competitionData) {
             res.status(200).json({
                 status: CommonRoutesConfig.statusMessage.SUCCESS,
@@ -19,15 +22,13 @@ export const getSpecificCompetitionHandler = async (
                 data: competitionData,
             });
         } else {
-            res.status(404).json({
-                status: CommonRoutesConfig.statusMessage.FAILED,
-                message: `Competition with ID ${competition_id} not found`,
-            });
-        };  
-    } catch (error) {
-        res.status(500).json({
-            status: CommonRoutesConfig.statusMessage.FAILED,
-            message: `An error occurred while fetching the competition data`,
-        });
+            throw new CompetitionNotFoundError();
+        }
+    } catch (error) {   
+        if(error instanceof ErrorWithCode){
+            return res.status(error.status).json(error.toJSON());
+        }
+    
+        return internalServerErrorResponse(res);
     };
 };
