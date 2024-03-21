@@ -21,9 +21,7 @@ export const getSpecificCompetitionHandler = async (
                 message: `Competition with ID ${competition_id} fetched successfully`,
                 data: competitionData,
             });
-        } else {
-            throw new CompetitionNotFoundError();
-        }
+        } 
     } catch (error) {   
         if(error instanceof ErrorWithCode){
             return res.status(error.status).json(error.toJSON());
