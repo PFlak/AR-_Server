@@ -46,7 +46,8 @@ class DatabaseManager {
     private initCollections(): void {
 
         this.collections = {
-            USERS_COLLECTIONS: this.db.collection("UsersCollection")
+            USERS_COLLECTIONS: this.db.collection("UsersCollection"),
+            COMPETITIONS_COLLETIONS: this.db.collection("Competitions"),
         };
     }
 
