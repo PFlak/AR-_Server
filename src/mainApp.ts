@@ -2,6 +2,7 @@ import { APPLICATION_CONFIG } from "./utils/configs/applicationConfig";
 import { CommonRoutesConfig } from "./common/common.routes.config";
 import { NotValidRoutes } from "./routes/v0.0.1/notValid.routes";
 import { ExampleRoute } from "./routes/v0.0.1/example.routes";
+import { CompetitionRoutes } from "./routes/v0.0.1/competition.routes";
 import { Logger } from "./models/common.models";
 import express, { Application } from "express";
 import { Debugger } from "./utils/debugger";
@@ -65,6 +66,7 @@ export class MainApp {
 
         this.routes = [];
 
+        this.routes.push(new CompetitionRoutes(application));
         this.routes.push(new ExampleRoute(application));
         this.routes.push(new NotValidRoutes(application));
     }

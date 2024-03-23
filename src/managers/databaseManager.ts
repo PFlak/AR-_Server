@@ -46,7 +46,8 @@ class DatabaseManager {
     private initCollections(): void {
 
         this.collections = {
-            USERS_COLLECTIONS: this.db.collection("UsersCollection")
+            USERS_COLLECTIONS: this.db.collection("UsersCollection"),
+            COMPETITIONS_COLLETIONS: this.db.collection("Competitions"),
         };
     }
 
@@ -109,6 +110,26 @@ class DatabaseManager {
         } catch (error) {
             this.logger.error(error);
             return null;
+        }
+    }
+
+    public async deleteRecord(
+        collectionName: keyof CollectionsList,
+        recordID: string,
+        recordValue: RecordValue
+    ): Promise<void> {
+        try {
+            const collection = await this.getCollection(collectionName);
+
+            const record = await collection
+                .where(recordID, "==", recordValue)
+                .get();
+
+            record.forEach(async (doc) => {
+                await doc.ref.delete();
+            });
+        } catch (error) {
+            this.logger.error(error);
         }
     }
 }
