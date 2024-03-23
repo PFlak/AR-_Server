@@ -1,5 +1,5 @@
 import { CommonRoutesConfig } from "../../common/common.routes.config"
-import { ERROR_CODES } from "./errorCodes.error"
+import { ERROR_CODES } from "../errors/errorCodes.error"
 import type { Response } from "express"
 
 export function internalServerErrorResponse(res: Response) {

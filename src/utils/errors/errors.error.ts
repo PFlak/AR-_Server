@@ -17,3 +17,9 @@ export class UserNotFoundError extends ErrorWithCode {
       super("User not found", 404, "USER_NOT_FOUND_ERROR");
     }
 }
+
+export class MissingParametersErros extends ErrorWithCode {
+    constructor(){
+        super(`Missing parameters`, 404, "MISSING_PARAMETERS")
+    }
+}
