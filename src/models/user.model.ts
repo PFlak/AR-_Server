@@ -15,5 +15,14 @@ export type UserRecord = {
     status: boolean;
     birth_date: number;
     role: AccountType;
-    profil_image: string;
+    profil_image?: string;
+}
+
+export type AdditionalUserInformation = {
+    user_id: string;
+    email: string;
+    name: string;
+    surname: string;
+    nick: string;
+    birth_date: string;
 }

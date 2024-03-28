@@ -6,6 +6,8 @@ import { ValidationHelper } from "../utils/helpers/validationHelper";
 import usersManager from "../managers/usersManager"
 import { CommonRoutesConfig } from "../common/common.routes.config";
 import { ErrorWithCode } from "../common/common.error.config";
+import { AdditionalUserInformation } from "../models/user.model";
+import { MissingParametersErros } from "../utils/errors/errors.error";
 
 export async function registerController(
     req: AuthorizedRequest,
@@ -13,16 +15,16 @@ export async function registerController(
     next: NextFunction
 ) {
     try {
-        const missingProperties = await usersManager.getMissingFiledsInUnAuthorizatedUser(req.userDetails!.uid);
+        const missingProperties = await usersManager.getMissingFiledsInUnAuthorizatedUser(req.userDetails!.uid) as (keyof AdditionalUserInformation)[];
         
         const { wrongDataTypes, validatedObjects, missingInRequest } = usersManager.validateUserRequestWithAdditionalInformations(req.body, missingProperties);
 
-        if (ValidationHelper.areArraysEmpty(missingInRequest, wrongDataTypes) === false) {
-            missingParametersResponse(res, { missing: missingInRequest, wrongTypes: wrongDataTypes });
+        if (ValidationHelper.areArraysEmpty(missingInRequest, wrongDataTypes) === true) {
+            throw new MissingParametersErros();
         }
-
-        //TODO move user from unAuthorizted collection to normal collection
-
+        
+        await usersManager.authorizateUser(validatedObjects, req.userDetails!.uid);
+        
         res.status(200).json({
             status: CommonRoutesConfig.statusMessage.SUCCESS,
             message: "Successfully added aditional infomations",

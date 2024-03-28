@@ -116,20 +116,27 @@ class DatabaseManager {
 
     public async deleteRecord(
         collectionName: keyof CollectionsList,
-        recordID: string,
-        recordValue: RecordValue
+        docId: string
     ): Promise<void> {
         try {
             const collection = await this.getCollection(collectionName);
 
-            const record = await collection
-                .where(recordID, "==", recordValue)
-                .get();
-
-            record.forEach(async (doc) => {
-                await doc.ref.delete();
-            });
+            await collection.doc(docId).delete();
         } catch (error) {
+            this.logger.error(error);
+        }
+    }
+
+    public async addRecordWithDocumentId(        
+        collectionName: keyof CollectionsList,
+        data: Record<string, any>,
+        docId: string
+    ): Promise<void>{
+        try{
+            const collection = await this.getCollection(collectionName);
+
+            await collection.doc(docId).set(data);
+        } catch(error){
             this.logger.error(error);
         }
     }
