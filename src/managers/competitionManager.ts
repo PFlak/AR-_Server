@@ -31,7 +31,37 @@ class CompetitionManager {
       throw new CompetitionNotFoundError();
     }
 
-    return competitionData;
+    const yachtCategories = await this.fetchDocuments(
+      competitionData.yacht_categories
+    );
+    const competitionTeams = await this.fetchDocuments(
+      competitionData.competition_teams
+    );
+    const competitionStages = await this.fetchDocuments(
+      competitionData.competition_stages
+    );
+
+    const competitionUpdatedData: Competition = {
+      ...competitionData,
+      yacht_categories: yachtCategories,
+      competition_teams: competitionTeams,
+      competition_stages: competitionStages,
+    };
+
+    return competitionUpdatedData;
+  }
+
+  private async fetchDocuments(documentReferences: any[]): Promise<any[]> {
+    if (!documentReferences || documentReferences.length === 0) {
+      return [];
+    }
+
+    return await Promise.all(
+      documentReferences.map(async (documentRef: any) => {
+        const documentSnapshot = await documentRef.get();
+        return documentSnapshot.data();
+      })
+    );
   }
 }
 
