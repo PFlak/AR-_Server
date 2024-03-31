@@ -18,11 +18,12 @@ export type UserRecord = {
     profil_image?: string;
 }
 
-export type AdditionalUserInformation = {
+export type UserRecordTMP = {
     user_id: string;
     email: string;
     name: string;
     surname: string;
     nick: string;
+    uid: string;
     birth_date: string;
 }

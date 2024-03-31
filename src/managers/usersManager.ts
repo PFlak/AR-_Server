@@ -1,6 +1,6 @@
 import { UserNotFoundError } from "../utils/errors/errors.error";
 import DatabaseManager from "./databaseManager";
-import { AdditionalUserInformation, User, UserRecord } from "../models/user.model";
+import { User, UserRecord, UserRecordTMP } from "../models/user.model";
 import { Logger } from "../models/common.models";
 import LoggerHelper from "../utils/logger";
 import { ValidationHelper } from "../utils/helpers/validationHelper";
@@ -111,26 +111,26 @@ class UsersManager {
         }
     }
 
-    public validateUserRequestWithAdditionalInformations(data: AdditionalUserInformation, checkedValues: (keyof AdditionalUserInformation)[]): any {
+    // public validateUserRequestWithAdditionalInformations(data: AdditionalUserInformation, checkedValues: (keyof AdditionalUserInformation)[]): any {
 
-        let validatedObjects: Partial<AdditionalUserInformation> = {};
-        let wrongDataTypes: string[] = [];
-        let missingInRequest: string[] = [];
+    //     let validatedObjects: Partial<AdditionalUserInformation> = {};
+    //     let wrongDataTypes: string[] = [];
+    //     let missingInRequest: string[] = [];
     
-        for (const key of checkedValues) {
-            if (typeof data[key] !== "undefined") {
-                if (ValidationHelper.isTypeMatchingConfig(data[key], key, this.config.typesof)) {
-                    validatedObjects[key] = data[key];
-                } else {
-                    wrongDataTypes.push(key);
-                }
-            } else {
-                missingInRequest.push(key);
-            }
-        }
+    //     for (const key of checkedValues) {
+    //         if (typeof data[key] !== "undefined") {
+    //             if (ValidationHelper.isTypeMatchingConfig(data[key], key, this.config.typesof)) {
+    //                 validatedObjects[key] = data[key];
+    //             } else {
+    //                 wrongDataTypes.push(key);
+    //             }
+    //         } else {
+    //             missingInRequest.push(key);
+    //         }
+    //     }
     
-        return { wrongDataTypes, validatedObjects, missingInRequest };
-    }
+    //     return { wrongDataTypes, validatedObjects, missingInRequest };
+    // }
 
     public async getMissingFiledsInUnAuthorizatedUser(userID: string): Promise<string[]>{
 
@@ -154,15 +154,11 @@ class UsersManager {
         return missingProperties;
     }
 
-    public async authorizateUser(additionalInformation: UserRecord, uid: string): Promise<void> {
-    
-        let userRecord = await this.getUserFromUnAuthorizatedCollection(uid);
+    public async authorizateUser(userRecord: UserRecordTMP): Promise<void> {
 
-        const newUserRecord = Object.assign(additionalInformation, userRecord);
+        await databaseManager.deleteRecord("UN_AUTHORIZATED_USERS_COLLECTIONS", userRecord.uid);
 
-        await databaseManager.deleteRecord("UN_AUTHORIZATED_USERS_COLLECTIONS", uid);
-
-        await databaseManager.addRecordWithDocumentId("USERS_COLLECTIONS", newUserRecord, uid);
+        await databaseManager.addRecordWithDocumentId("USERS_COLLECTIONS", userRecord, userRecord.uid);
     }
 }
 
