@@ -1,5 +1,6 @@
 import { CompetitionNotFoundError } from "../utils/errors/errors.error";
 import DatabaseManager from "./databaseManager";
+import { DatabaseHelper } from "../utils/helpers/databaseHelper";
 import { COLLECTION_NAMES } from "../models/databaseManager.models";
 import { Competition } from "../models/competition.model";
 import { Logger } from "../models/common.models";
@@ -31,7 +32,21 @@ class CompetitionManager {
       throw new CompetitionNotFoundError();
     }
 
-    return competitionData;
+    const [yachtCategories, competitionTeams, competitionStages] =
+      await Promise.all([
+        DatabaseHelper.fetchDocuments(competitionData.yacht_categories),
+        DatabaseHelper.fetchDocuments(competitionData.competition_teams),
+        DatabaseHelper.fetchDocuments(competitionData.competition_stages),
+      ]);
+
+    const competitionUpdatedData: Competition = {
+      ...competitionData,
+      yacht_categories: yachtCategories,
+      competition_teams: competitionTeams,
+      competition_stages: competitionStages,
+    };
+
+    return competitionUpdatedData;
   }
 }
 
