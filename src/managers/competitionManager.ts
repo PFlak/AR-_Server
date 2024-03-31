@@ -23,7 +23,7 @@ class CompetitionManager {
 
   public async getCompetition(competition_id: string): Promise<Competition> {
     const competitionData = await DatabaseManager.getRecordById<Competition>(
-      COLLECTION_NAMES.COMPETITIONS_COLLECTIONS,
+      "COMPETITIONS_COLLECTIONS",
       "competition_id",
       competition_id
     );

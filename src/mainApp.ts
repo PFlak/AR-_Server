@@ -10,6 +10,7 @@ import LoggerHelper from "./utils/logger";
 import * as http from "http";
 import cors from "cors";
 import { initalizeFirebase } from "./firebase";
+import { AuthRoutes } from "./routes/v0.0.1/auth.routes";
 
 export class MainApp {
 
@@ -27,6 +28,7 @@ export class MainApp {
 
         this.initLogger();
         this.initApplcationConfig();
+        // this.initFirebase();
         this.initApplicationAndServer();
         this.initBasicDebug();
         this.initRoutes();
@@ -41,7 +43,12 @@ export class MainApp {
     private initApplcationConfig(): void {
 
         this.config = APPLICATION_CONFIG;
-    }
+    }        
+
+    //! Sometimes there can be error
+    // private initFirebase(): void {
+    //     initalizeFirebase();
+    // }
 
     private initApplicationAndServer(): void {
 
@@ -66,6 +73,7 @@ export class MainApp {
 
         this.routes = [];
 
+        this.routes.push(new AuthRoutes(application));
         this.routes.push(new CompetitionRoutes(application));
         this.routes.push(new ExampleRoute(application));
         this.routes.push(new NotValidRoutes(application));

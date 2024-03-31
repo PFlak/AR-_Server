@@ -1,7 +1,8 @@
 import type { AuthorizedRequest } from "../models/request.models";
+import type { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import type { Response, NextFunction } from "express";
 import type { Logger } from "../models/common.models";
-import { internalServerErrorResponse } from "../utils/errors/internalServerError.error";
+import { internalServerErrorResponse } from "../utils/responses/internalServerError.error";
 import { FirebaseHelper } from "../utils/helpers/firebaseHelper";;
 import LoggerHelper from "../utils/logger";
 import { InvalidTokenError } from "../utils/errors/errors.error";
@@ -25,22 +26,25 @@ class AuthMiddleware {
         this.logger = LoggerHelper.getLogger("AuthMiddleware");
     }
 
-    async verifyUserMiddleware(req: AuthorizedRequest, res: Response, next: NextFunction) {
+    public verifyUserMiddleware = async (
+        req: AuthorizedRequest,
+        res: Response, 
+        next: NextFunction
+    ) => {
         try {
             const token = req.headers.authorization!.split(" ")[1] as string;
 
             if(!token){
-                throw new InvalidTokenError()
+                throw new InvalidTokenError();
             }
-
-            //TODO should implement correct type
-            const decodedValue = await FirebaseHelper.verifyToken(token) as unknown as any;
+            
+            const decodedValue = await FirebaseHelper.verifyToken(token);
 
             if (!decodedValue) {
                 throw new InvalidTokenError();
             }
             
-            req.user = decodedValue;
+            req.userDetails = decodedValue;
             next();
         } catch (error) {
 
@@ -50,7 +54,7 @@ class AuthMiddleware {
 
                 return res.status(error.status).json(error.toJSON());
             }
-    
+            
             this.logger.fatal("Internal Server Error at middleware!");
 
             return internalServerErrorResponse(res);
@@ -61,3 +65,5 @@ class AuthMiddleware {
 const instance = new AuthMiddleware();
 
 export default instance;
+
+

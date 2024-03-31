@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { CommonRoutesConfig } from "../common/common.routes.config";
-import { internalServerErrorResponse } from "../utils/errors/internalServerError.error";
+import { internalServerErrorResponse } from "../utils/responses/internalServerError.error";
 import CompetitionManager from "../managers/competitionManager";
 import { ErrorWithCode } from "../common/common.error.config";
 import { CompetitionNotFoundError } from "../utils/errors/errors.error";

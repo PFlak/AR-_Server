@@ -5,6 +5,7 @@ import { DatabaseManagerConfig } from "../utils/configs/databaseManagerConfig";
 import { Collection, CollectionsList, RecordValue } from "../models/databaseManager.models";
 import { Logger } from "../models/common.models";
 import loggerHelper from "../utils/logger";
+import { COLLECTION_NAMES } from "../models/databaseManager.models";
 
 class DatabaseManager {
     private config!: typeof DatabaseManagerConfig;
@@ -18,9 +19,10 @@ class DatabaseManager {
 
     init(): void {
 
+        initalizeFirebase();
+
         this.setupConfig();
         this.initLogger();
-        this.initFirebase();
         this.initDatabase();
         this.initCollections();
     }
@@ -33,10 +35,6 @@ class DatabaseManager {
         this.logger = loggerHelper.getLogger("DatabaseManager");
     }
 
-    private initFirebase(): void {
-        initalizeFirebase();
-    }
-
     private initDatabase(): void {
 
         this.db = getFirestore();
@@ -46,8 +44,11 @@ class DatabaseManager {
     private initCollections(): void {
 
         this.collections = {
-            USERS_COLLECTIONS: this.db.collection("UsersCollection"),
-            COMPETITIONS_COLLETIONS: this.db.collection("Competitions"),
+            USERS_COLLECTIONS: this.db.collection(COLLECTION_NAMES.USERS_COLLECTIONS),
+            COMPETITIONS_COLLECTIONS: this.db.collection(COLLECTION_NAMES.COMPETITIONS_COLLECTIONS),
+            UN_AUTHORIZATED_USERS_COLLECTIONS: this.db.collection(COLLECTION_NAMES.UN_AUTHORIZATED_USERS_COLLECTIONS),
+            COMPETITION_TEAMS_COLLECTIONS: this.db.collection(COLLECTION_NAMES.COMPETITIONS_COLLECTIONS),
+            YACHT_CATEGORIES_COLLECTIONS: this.db.collection(COLLECTION_NAMES.YACHT_CATEGORIES_COLLECTIONS),
         };
     }
 
@@ -115,20 +116,27 @@ class DatabaseManager {
 
     public async deleteRecord(
         collectionName: keyof CollectionsList,
-        recordID: string,
-        recordValue: RecordValue
+        docId: string
     ): Promise<void> {
         try {
             const collection = await this.getCollection(collectionName);
 
-            const record = await collection
-                .where(recordID, "==", recordValue)
-                .get();
-
-            record.forEach(async (doc) => {
-                await doc.ref.delete();
-            });
+            await collection.doc(docId).delete();
         } catch (error) {
+            this.logger.error(error);
+        }
+    }
+
+    public async addRecordWithDocumentId(        
+        collectionName: keyof CollectionsList,
+        data: Record<string, any>,
+        docId: string
+    ): Promise<void>{
+        try{
+            const collection = await this.getCollection(collectionName);
+
+            await collection.doc(docId).set(data);
+        } catch(error){
             this.logger.error(error);
         }
     }
