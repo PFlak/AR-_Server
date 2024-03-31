@@ -1,13 +1,15 @@
 import { UserNotFoundError } from "../utils/errors/errors.error";
 import DatabaseManager from "./databaseManager";
-import { COLLECTION_NAMES } from "../models/databaseManager.models";
-import { User } from "../models/user.model";
+import { User, UserRecord, UserRecordTMP } from "../models/user.model";
 import { Logger } from "../models/common.models";
 import LoggerHelper from "../utils/logger";
-
+import { ValidationHelper } from "../utils/helpers/validationHelper";
+import databaseManager from "./databaseManager";
+import { UserManagerConfig } from "../utils/configs/userManagerConfig";
 
 class UsersManager {
 
+    private config: typeof UserManagerConfig = UserManagerConfig;
     private logger!: Logger;
 
     constructor(){
@@ -15,6 +17,7 @@ class UsersManager {
     }
 
     private init(): void{
+        
         this.initLogger();
     }
 
@@ -25,8 +28,29 @@ class UsersManager {
     public async getUser(user_id: string): Promise<User | null> {
         try {
             const userData = await DatabaseManager.getRecordById<User>(
-                COLLECTION_NAMES.USERS_COLLECTIONS,
+                "USERS_COLLECTIONS",
                 "user_id",
+                user_id
+            );
+
+            if (userData === null) {
+                throw new UserNotFoundError();
+            }
+
+            return userData;
+        } catch (error) {
+            this.logger.error(error);
+
+            return null;
+        }
+    }
+
+    public async getUserFromUnAuthorizatedCollection(user_id: string): Promise<UserRecord | null> {
+        try {
+
+            const userData = await DatabaseManager.getRecordById<UserRecord>(
+                "UN_AUTHORIZATED_USERS_COLLECTIONS",
+                "uid",
                 user_id
             );
 
@@ -50,7 +74,7 @@ class UsersManager {
                 const updatedUserData = { ...userData, ...newData };
 
                 await DatabaseManager.addRecord(
-                    COLLECTION_NAMES.USERS_COLLECTIONS,
+                    'USERS_COLLECTIONS',
                     updatedUserData
                 );
 
@@ -71,8 +95,7 @@ class UsersManager {
 
             if (userData) {
                 await DatabaseManager.deleteRecord(
-                    COLLECTION_NAMES.USERS_COLLECTIONS,
-                    "user_id",
+                    'USERS_COLLECTIONS',
                     user_id
                 );
 
@@ -85,6 +108,56 @@ class UsersManager {
 
             return false;
         }
+    }
+
+    // public validateUserRequestWithAdditionalInformations(data: AdditionalUserInformation, checkedValues: (keyof AdditionalUserInformation)[]): any {
+
+    //     let validatedObjects: Partial<AdditionalUserInformation> = {};
+    //     let wrongDataTypes: string[] = [];
+    //     let missingInRequest: string[] = [];
+    
+    //     for (const key of checkedValues) {
+    //         if (typeof data[key] !== "undefined") {
+    //             if (ValidationHelper.isTypeMatchingConfig(data[key], key, this.config.typesof)) {
+    //                 validatedObjects[key] = data[key];
+    //             } else {
+    //                 wrongDataTypes.push(key);
+    //             }
+    //         } else {
+    //             missingInRequest.push(key);
+    //         }
+    //     }
+    
+    //     return { wrongDataTypes, validatedObjects, missingInRequest };
+    // }
+
+    public async getMissingFiledsInUnAuthorizatedUser(userID: string): Promise<string[]>{
+
+        const unAuthUserData = await this.getUserFromUnAuthorizatedCollection(userID);
+        
+        const additionFieldsInDatabase = this.config.additionFieldsInDatabase as (keyof UserRecord)[];
+
+        let missingProperties = [];
+
+        if(unAuthUserData === null){
+            throw new UserNotFoundError();
+        }
+
+        for(const key of additionFieldsInDatabase){
+            
+            if( typeof unAuthUserData[key] === "undefined" || unAuthUserData[key] === null || unAuthUserData[key] === ""){
+                missingProperties.push(key);
+            }
+        }
+
+        return missingProperties;
+    }
+
+    public async authorizateUser(userRecord: UserRecordTMP): Promise<void> {
+
+        await databaseManager.deleteRecord("UN_AUTHORIZATED_USERS_COLLECTIONS", userRecord.uid);
+
+        await databaseManager.addRecordWithDocumentId("USERS_COLLECTIONS", userRecord, userRecord.uid);
     }
 }
 
