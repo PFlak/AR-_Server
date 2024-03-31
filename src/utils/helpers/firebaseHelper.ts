@@ -14,8 +14,8 @@ export class FirebaseHelper {
         };
     };
 
-    public static async getServerTimeStamp() {
-        return await firebase.firestore.FieldValue.serverTimestamp();
+    public static async getServerTimeStamp(): Promise<firebase.firestore.Timestamp>{
+        return await firebase.firestore.Timestamp.now();
     }
 
     public static async verifyToken(token: string): Promise<DecodedIdToken> {

@@ -1,6 +1,6 @@
 import type { Application } from "express";
 import { CommonRoutesConfig } from "../../common/common.routes.config";
-import { getSpecificCompetitionHandler } from "../../controllers/competitionRouter.controller";
+import { addTeamToCompetitionHandler, getSpecificCompetitionHandler } from "../../controllers/competitionRouter.controller";
 import express from "express";
 
 export class CompetitionRoutes extends CommonRoutesConfig {
@@ -14,6 +14,8 @@ export class CompetitionRoutes extends CommonRoutesConfig {
         const competitionRouter = express.Router();
 
         competitionRouter.get('/getSpecificCompetition/:id', getSpecificCompetitionHandler);
+
+        competitionRouter.post('/updateCompetition/:id/addTeam', addTeamToCompetitionHandler);
 
         this.app.use('/competition', competitionRouter);
 

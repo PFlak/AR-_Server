@@ -11,6 +11,7 @@ import * as http from "http";
 import cors from "cors";
 import { initalizeFirebase } from "./firebase";
 import { AuthRoutes } from "./routes/v0.0.1/auth.routes";
+import { TeamsRoute } from "./routes/v0.0.1/team.routes";
 
 export class MainApp {
 
@@ -75,6 +76,7 @@ export class MainApp {
 
         this.routes.push(new AuthRoutes(application));
         this.routes.push(new CompetitionRoutes(application));
+        this.routes.push(new TeamsRoute(application));
         this.routes.push(new ExampleRoute(application));
         this.routes.push(new NotValidRoutes(application));
     }
