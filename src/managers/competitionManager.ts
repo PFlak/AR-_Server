@@ -1,5 +1,6 @@
 import { CompetitionNotFoundError } from "../utils/errors/errors.error";
 import DatabaseManager from "./databaseManager";
+import { DatabaseHelper } from "../utils/helpers/databaseHelper";
 import { COLLECTION_NAMES } from "../models/databaseManager.models";
 import { Competition } from "../models/competition.model";
 import { Logger } from "../models/common.models";
@@ -31,15 +32,12 @@ class CompetitionManager {
       throw new CompetitionNotFoundError();
     }
 
-    const yachtCategories = await this.fetchDocuments(
-      competitionData.yacht_categories
-    );
-    const competitionTeams = await this.fetchDocuments(
-      competitionData.competition_teams
-    );
-    const competitionStages = await this.fetchDocuments(
-      competitionData.competition_stages
-    );
+    const [yachtCategories, competitionTeams, competitionStages] =
+      await Promise.all([
+        DatabaseHelper.fetchDocuments(competitionData.yacht_categories),
+        DatabaseHelper.fetchDocuments(competitionData.competition_teams),
+        DatabaseHelper.fetchDocuments(competitionData.competition_stages),
+      ]);
 
     const competitionUpdatedData: Competition = {
       ...competitionData,
@@ -49,19 +47,6 @@ class CompetitionManager {
     };
 
     return competitionUpdatedData;
-  }
-
-  private async fetchDocuments(documentReferences: any[]): Promise<any[]> {
-    if (!documentReferences || documentReferences.length === 0) {
-      return [];
-    }
-
-    return await Promise.all(
-      documentReferences.map(async (documentRef: any) => {
-        const documentSnapshot = await documentRef.get();
-        return documentSnapshot.data();
-      })
-    );
   }
 }
 
