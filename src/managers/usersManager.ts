@@ -4,7 +4,6 @@ import { User, UserRecord, UserRecordTMP } from "../models/user.model";
 import { Logger } from "../models/common.models";
 import LoggerHelper from "../utils/logger";
 import { ValidationHelper } from "../utils/helpers/validationHelper";
-import { AddtionalInformationsValidationResult } from "../models/userManager.models";
 import databaseManager from "./databaseManager";
 import { UserManagerConfig } from "../utils/configs/userManagerConfig";
 
