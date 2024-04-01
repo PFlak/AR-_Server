@@ -1,12 +1,4 @@
-export type YachtCategoryId = string;
-export type YachtName = string;
-export type YachtShortName = string;
-export type YachtDescription = string;
+import { yachtCategorieSchema } from "../utils/schemas/yachtCategorie.schema";
+import { z } from "zod";
 
-export type YachtCategorie<AdditionalOptions> = {
-    yacht_cat_id: YachtCategoryId;
-    name: YachtName;
-    short_name: YachtShortName;
-    description: YachtDescription;
-    options: AdditionalOptions;
-}
+export type YachtCategorie = z.infer<typeof yachtCategorieSchema>;

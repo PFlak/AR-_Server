@@ -140,6 +140,21 @@ class DatabaseManager {
             this.logger.error(error);
         }
     }
+
+	public async addRecordToSubcollection(
+		parentCollectionName: keyof CollectionsList,
+		parentId: string,
+		subcollectionName: string,
+		data: Record<string, any>
+	  ): Promise<void> {
+		try {
+		  const parentRef = this.collections[parentCollectionName].doc(parentId);
+		  const subcollectionRef = parentRef.collection(subcollectionName);
+		  await subcollectionRef.add(data);
+		} catch (error) {
+		  this.logger.error(error);
+		}
+	}
 }
 
 const instance = new DatabaseManager();

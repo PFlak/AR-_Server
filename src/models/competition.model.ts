@@ -6,7 +6,7 @@ import { YachtCategorie } from "./yachtCategorie.models";
 export type CompetitionLocation = z.infer<typeof competitionLocation>;
 
 export type Competition = z.infer<typeof competitionSchema> & {
-  yacht_categories: YachtCategorie<any>[];
+  yacht_categories: YachtCategorie[];
   competition_teams: any;
   competition_stages: any;
 };
