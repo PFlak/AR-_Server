@@ -11,6 +11,8 @@ import * as http from "http";
 import cors from "cors";
 import { initalizeFirebase } from "./firebase";
 import { AuthRoutes } from "./routes/v0.0.1/auth.routes";
+import { SocketRoutes } from "./routes/v0.0.1/socket.routes";
+import { Server } from "socket.io";
 
 export class MainApp {
 
@@ -18,6 +20,7 @@ export class MainApp {
     private application!: Application;
     private routes!: CommonRoutesConfig[];
     private server!: http.Server;
+    private serverIO!: Server;
     private logger!: Logger;
 
     constructor() {
@@ -57,6 +60,7 @@ export class MainApp {
         this.application.use(express.json());
 
         this.server = http.createServer(this.application);
+        this.serverIO = new Server(this.server, { cors: { origin: "*" } });
     }
 
     private initBasicDebug(): void {
@@ -76,6 +80,7 @@ export class MainApp {
         this.routes.push(new AuthRoutes(application));
         this.routes.push(new CompetitionRoutes(application));
         this.routes.push(new ExampleRoute(application));
+        this.routes.push(new SocketRoutes(application, this.serverIO));
         this.routes.push(new NotValidRoutes(application));
     }
 

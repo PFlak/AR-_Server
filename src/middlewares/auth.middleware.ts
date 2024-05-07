@@ -38,7 +38,7 @@ class AuthMiddleware {
                 throw new InvalidTokenError();
             }
             
-            const decodedValue = await FirebaseHelper.verifyToken(token);
+            const decodedValue = await FirebaseHelper.verifyToken(token) as DecodedIdToken;
 
             if (!decodedValue) {
                 throw new InvalidTokenError();

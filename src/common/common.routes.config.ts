@@ -1,9 +1,11 @@
 import type { Application } from "express";
+import type { Server } from "socket.io";
 
 export abstract class CommonRoutesConfig {
 
     private routeName: string;
     private version: string;
+    protected io: Server | null;
     protected app: Application;
 
     public static statusMessage = {
@@ -21,10 +23,16 @@ export abstract class CommonRoutesConfig {
         NOT_VALID: "NotValidRoutes",
     };
 
-    constructor(app: Application, routeName: string, version: string) {
+    constructor(
+        app: Application, 
+        routeName: string, 
+        version: string,
+        server?: Server
+    ) {
         this.routeName = routeName;
         this.app = app;
         this.version = version;
+        this.io = server ?? null;
 
         this.configureRoute();
     }

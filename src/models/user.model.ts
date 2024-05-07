@@ -27,3 +27,17 @@ export type UserRecordTMP = {
     uid: string;
     birth_date: string;
 }
+
+export type DecodedToken = {
+    aud: string;
+    auth_time: number;
+    email: string;
+    email_verified: boolean;
+    exp: number;
+    firebase: Record<string, any>;
+    iat: number;
+    iss: string;
+    sub: string;
+    uid: string;
+    user_id: string;
+}

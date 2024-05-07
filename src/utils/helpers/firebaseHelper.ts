@@ -1,6 +1,7 @@
 import type { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import firebase from "firebase-admin";
 import { InvalidTokenError } from "../errors/errors.error";
+import { DecodedToken } from "../../models/user.model";
 
 export class FirebaseHelper {
     public static converterAssignTypes<T extends {}>() {
@@ -18,7 +19,7 @@ export class FirebaseHelper {
         return await firebase.firestore.FieldValue.serverTimestamp();
     }
 
-    public static async verifyToken(token: string): Promise<DecodedIdToken> {
+    public static async verifyToken(token: string): Promise<DecodedIdToken | DecodedToken> {
         try {
             const decodedValue = await firebase.app().auth().verifyIdToken(token);
 
