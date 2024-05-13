@@ -1,36 +1,41 @@
-import React from "react";
+import { useEffect } from "react";
 import { signOut } from "firebase/auth";
-import { collection, doc, getDocs } from "firebase/firestore";
-import { auth } from "../config/firebase";
+import { FIREBASE_AUTH } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
-import { db } from "../config/firebase";
 
 const Home = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    signOut(auth)
+    signOut(FIREBASE_AUTH)
       .then(() => {
         // Sign-out successful.
-        navigate("/");
         console.log("Signed out successfully");
       })
       .catch((error) => {
-        // An error happened.
+        console.error(error);
       });
   };
 
-  //Testy czytania z firestore
-  const readDoc = () => {
-    const docReference = collection(db, "Competitions");
-    getDocs(docReference).then((querySnapschot) => {
-      const data = querySnapschot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      console.log(data);
+  useEffect(() => {
+    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
+      if(user === null){
+        navigate("/")
+      }
     });
+
+    return unsubscribe;
+  }, []);
+
+  // Zadanie 3
+  const readDoc = () => {
   };
+
+  const getUserSpecification = () => {
+    console.log('------- User Specification ------');
+    console.log(FIREBASE_AUTH.currentUser);
+    console.log('------------------------');
+  }
 
   return (
     <>
@@ -42,7 +47,11 @@ const Home = () => {
         </div>
 
         <div>
-          <button onClick={readDoc}>Show Data</button>
+          <button onClick={getUserSpecification}>Show User Specifiation</button> - They are avalible at console (F12)
+        </div>
+
+        <div>
+          <button onClick={readDoc}> Read data from Database </button>
         </div>
       </nav>
     </>

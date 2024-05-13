@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
+import { FIREBASE_AUTH } from "../config/firebase";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -8,13 +8,14 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  //Zadanie 2 B
   const onLogin = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
+
+    signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        navigate("/home");
         console.log(user);
       })
       .catch((error) => {
@@ -23,6 +24,16 @@ const Login = () => {
         console.log(errorCode, errorMessage);
       });
   };
+
+  useEffect(() => {
+    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
+      if(user !== null){
+        navigate("/home")
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <>

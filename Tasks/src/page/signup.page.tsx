@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, signInWithGooglePopup } from "../config/firebase";
+import { FIREBASE_AUTH, signInWithGooglePopup } from "../config/firebase";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -12,19 +12,17 @@ const Signup = () => {
   const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await createUserWithEmailAndPassword(auth, email, password)
+    await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         console.log(user);
         navigate("/login");
-        // ...
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
-        // ..
       });
   };
 
@@ -32,11 +30,21 @@ const Signup = () => {
     try {
       const response = await signInWithGooglePopup();
       console.log(response.user);
-      navigate("/logout");
+      navigate("/home");
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
+      if(user !== null){
+        navigate("/home")
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <main>
@@ -78,9 +86,8 @@ const Signup = () => {
             >
               Sign up with Google
             </button>
-
             <p>
-              Already have an account? <NavLink to="/login">Log in</NavLink>
+              Already have an account? <NavLink to="/">Log in</NavLink>
             </p>
           </div>
         </div>
