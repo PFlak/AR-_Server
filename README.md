@@ -22,7 +22,7 @@ ___
 - Zaloguj się lub załóż konto.
 - Stwórz nowy projekt - https://console.firebase.google.com/
 - Zapoznaj się z dostępnymi możliwościami w projekcie.
-- Uruchom usuługe Firestore Database.
+- Uruchom usługę Firestore Database.
 - Dodaj ręcznie kilka rekordów do bazy Firestore Database.
 - Jako potwierdzenie rozwiązania zadania prześlij zrzut ekranu dodanych rekordów.
 
@@ -46,7 +46,7 @@ ___
 ### Pobieranie rekordów z database
 
 - W pliku ```home.page.tsx``` uzupełnij metodę pobierającą rekordy z Firestore Database (te które dodałeś w pierwszym zadaniu).
-- Możesz wyświetliść je po prostu w konsoli, ewentualnie zaimplementuj wyświetlanie na frontendzie.
+- Możesz wyświetlić je po prostu w konsoli, ewentualnie zaimplementuj wyświetlanie na frontendzie.
 - Jako potwierdzenie rozwiązania zadania prześlij napisany kod.
 
 ___
