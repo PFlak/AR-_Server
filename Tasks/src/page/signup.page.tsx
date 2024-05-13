@@ -12,28 +12,12 @@ const Signup = () => {
   const onSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log(user);
-        navigate("/login");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
+    // TODO Zadanie 2 C - Rejestracja za pomoca emaila i hasla 'createUserWithEmailAndPassword'
   };
 
   const logGoogleUser = async () => {
-    try {
-      const response = await signInWithGooglePopup();
-      console.log(response.user);
-      navigate("/home");
-    } catch (error) {
-      console.log(error);
-    }
+
+    //TODO Zadanie 2 D - Rejestracja za pomoca Googla 'signInWithGooglePopup';
   };
 
   useEffect(() => {

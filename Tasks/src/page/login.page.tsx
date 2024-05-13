@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../config/firebase";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -8,21 +8,10 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  //Zadanie 2 B
   const onLogin = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
+    //TODO Zadanie 2B - Logowanie przy pomocy 'signInWithEmailAndPassword'
   };
 
   useEffect(() => {

@@ -27,8 +27,8 @@ const Home = () => {
     return unsubscribe;
   }, []);
 
-  // Zadanie 3
   const readDoc = () => {
+    //TODO Zadanie 3 - Odczytwanie z bazy danych i logowanie do consoli
   };
 
   const getUserSpecification = () => {
