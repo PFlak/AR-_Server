@@ -1,43 +1,50 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Home from "./page/home.page";
 import Signup from "./page/signup.page";
 import Login from "./page/login.page";
-import { BrowserRouter as Router, useNavigate } from "react-router-dom";
+import { Navigate, BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 import { FIREBASE_AUTH } from "./config/firebase";
 
-function CustomRouter() {
+function AuthRouter() {
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="*" element={<Navigate to="/" replace={true} /> }/>
+    </Routes>
+  )
+}
 
-  const navigate = useNavigate();
+function MainRouter(){
+  return (
+    <Routes>
+      <Route path="/" element={<Home/>} />
+      <Route path="*" element={<Navigate to="/" replace={true} /> }/>
+    </Routes>
+  )
+}
+
+function App() {
+  const [isAuthorizated, setIsAuthorizated] = useState(false);
 
   useEffect(() => {
     const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
-      if (user === null) {
-        navigate("/")
-      }
+      setIsAuthorizated(user !== null);
     });
 
     return unsubscribe;
   }, []);
 
   return (
-    <div>
-      <section>
-        <Routes>
-          {" "}
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<Home />} />
-        </Routes>
-      </section>
-    </div>
-  )
-}
-
-function App() {
-  return (
     <Router>
-      <CustomRouter/>
+      {
+        isAuthorizated ? (
+          <MainRouter/>
+        ) : (
+          <AuthRouter/>
+        )
+      }
     </Router>
   );
 }

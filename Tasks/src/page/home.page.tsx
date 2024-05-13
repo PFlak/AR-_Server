@@ -1,13 +1,11 @@
 import { signOut } from "firebase/auth";
 import { FIREBASE_AUTH } from "../config/firebase";
-import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 
   const handleLogout = () => {
     signOut(FIREBASE_AUTH)
       .then(() => {
-        // Sign-out successful.
         console.log("Signed out successfully");
       })
       .catch((error) => {

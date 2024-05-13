@@ -1,26 +1,21 @@
-import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from "../config/firebase";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const onLogin = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-
-    //TODO Zadanie 2B - Logowanie przy pomocy 'signInWithEmailAndPassword'
-  };
+  const {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    loginMethod
+  } = useAuth();
 
   return (
     <>
       <main>
         <section>
           <div>
-            <p> FocusApp </p>
-
-            <form>
+            <p> Test App </p>
               <div>
                 <label htmlFor="email-address">Email address</label>
                 <input
@@ -29,6 +24,7 @@ const Login = () => {
                   type="email"
                   required
                   placeholder="Email address"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -41,14 +37,14 @@ const Login = () => {
                   type="password"
                   required
                   placeholder="Password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
 
               <div>
-                <button onClick={onLogin}>Login</button>
+                <button onClick={loginMethod}>Login</button>
               </div>
-            </form>
 
             <p className="text-sm text-white text-center">
               No account yet? <NavLink to="/signup">Sign up</NavLink>

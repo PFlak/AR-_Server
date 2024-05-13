@@ -1,22 +1,15 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH, signInWithGooglePopup } from "../config/firebase";
+import { useAuth } from "../hooks/useAuth";
 
 const Signup = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const onSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-
-    // TODO Zadanie 2 C - Rejestracja za pomoca emaila i hasla 'createUserWithEmailAndPassword'
-  };
-
-  const logGoogleUser = async () => {
-
-    //TODO Zadanie 2 D - Rejestracja za pomoca Googla 'signInWithGooglePopup';
-  };
+  const {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    registerWithEmailPassword,
+    registerWithGoogle
+  } = useAuth();
 
   return (
     <main>
@@ -24,37 +17,35 @@ const Signup = () => {
         <div>
           <div>
             <h1> FocusApp </h1>
-            <form>
-              <div>
-                <label htmlFor="email-address">Email address</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Email address"
-                />
-              </div>
+            <div>
+              <label htmlFor="email-address">Email address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="Email address"
+              />
+            </div>
 
-              <div>
-                <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Password"
-                />
-              </div>
+            <div>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="Password"
+              />
+            </div>
 
-              <button type="submit" onClick={onSubmit}>
-                Sign up
-              </button>
-            </form>
+            <button type="submit" onClick={registerWithEmailPassword}>
+              Sign up
+            </button>
 
             <button
               style={{ backgroundColor: "blue", color: "whitesmoke" }}
-              onClick={logGoogleUser}
+              onClick={registerWithGoogle}
             >
               Sign up with Google
             </button>
