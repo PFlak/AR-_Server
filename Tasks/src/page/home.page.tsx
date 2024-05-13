@@ -1,10 +1,8 @@
-import { useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { FIREBASE_AUTH } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     signOut(FIREBASE_AUTH)
@@ -16,16 +14,6 @@ const Home = () => {
         console.error(error);
       });
   };
-
-  useEffect(() => {
-    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
-      if(user === null){
-        navigate("/")
-      }
-    });
-
-    return unsubscribe;
-  }, []);
 
   const readDoc = () => {
     //TODO Zadanie 3 - Odczytwanie z bazy danych i logowanie do consoli

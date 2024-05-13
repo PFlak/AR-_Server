@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, signInWithGooglePopup } from "../config/firebase";
 
 const Signup = () => {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -19,16 +17,6 @@ const Signup = () => {
 
     //TODO Zadanie 2 D - Rejestracja za pomoca Googla 'signInWithGooglePopup';
   };
-
-  useEffect(() => {
-    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
-      if(user !== null){
-        navigate("/home")
-      }
-    });
-
-    return unsubscribe;
-  }, []);
 
   return (
     <main>

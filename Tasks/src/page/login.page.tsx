@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../config/firebase";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,16 +12,6 @@ const Login = () => {
 
     //TODO Zadanie 2B - Logowanie przy pomocy 'signInWithEmailAndPassword'
   };
-
-  useEffect(() => {
-    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
-      if(user !== null){
-        navigate("/home")
-      }
-    });
-
-    return unsubscribe;
-  }, []);
 
   return (
     <>
