@@ -35,7 +35,7 @@ ___
 - Wejdź na stworzony projekt w Firebase:
 - a) Project overview -> Project settings -> Your apps -> Add app -> Web -> Config 
 - Skopiuj config i znajdź w projekcie miejsce, w którym należy go wkleić.
-- b) Authentication -> Sign in method -> Add new provider -> email/password
+- b) Authentication -> Sign in method -> Add new provider -> email/password oraz Google
 - Znajdź w kodzie metody do uzupełnienia, uzupełnij je, a następnie przetestuj działanie.
 - Jako potwierdzenie rozwiązania zadania prześlij napisany kod.
 
