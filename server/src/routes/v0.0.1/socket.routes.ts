@@ -3,7 +3,7 @@ import express from "express";
 import { Namespace, Server, Socket } from "socket.io";
 import { CommonRoutesConfig } from "../../common/common.routes.config";
 import { APPLICATION_CONFIG } from "../../utils/configs/applicationConfig";
-import { authSocketMiddleware } from "../../middlewares/socket.middleware";
+import { authSocketMiddleware, parseSocketConnectionMiddleware } from "../../middlewares/socket.middleware";
 import { NextSocketFunction } from "../../models/common.models";
 
 export class SocketRoutes extends CommonRoutesConfig {
@@ -41,7 +41,9 @@ export class SocketRoutes extends CommonRoutesConfig {
 
     private setupSocketMiddleware(): void {
 
-        this.competitionNamespace.use(authSocketMiddleware);
+        // this.competitionNamespace.use(authSocketMiddleware);
+
+        this.competitionNamespace.use(parseSocketConnectionMiddleware);
     }
 
     checkRequiredParameters = (next: NextSocketFunction, roomID: string, userID: string, socketID: string) => {

@@ -4,6 +4,8 @@ import { ErrorWithCode } from "../common/common.error.config";
 import { NextSocketFunction } from "../models/common.models";
 import { FirebaseHelper } from "../utils/helpers/firebaseHelper";
 import { DecodedToken } from "../models/user.model";
+import CompetitionManager from "../managers/competitionManager";
+import { competitionIdParser } from "../utils/schemas/competition.schema";
 
 export const authSocketMiddleware = async (
     socket: Socket,
@@ -12,7 +14,7 @@ export const authSocketMiddleware = async (
     try {
 
         const token = socket.handshake.auth.token.split(" ")[1] as string;
-        debugger
+        
         if (!token) {
             throw new InvalidTokenError()
         }
@@ -30,4 +32,20 @@ export const authSocketMiddleware = async (
         }
         next(new Error());
     }
+}
+
+export const parseSocketConnectionMiddleware = async (
+  socket: Socket,
+  next: NextSocketFunction
+) => {
+  try {
+
+    const competitionID = await competitionIdParser.parseAsync(socket.handshake.query.competitionID);
+
+    console.log(competitionID)
+    console.log(await CompetitionManager.isCompetitionActive(competitionID))
+  } catch(error){
+    console.log("first")
+    next(new Error());
+  }
 }

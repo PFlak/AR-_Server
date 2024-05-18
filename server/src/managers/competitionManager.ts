@@ -5,6 +5,7 @@ import { COLLECTION_NAMES } from "../models/databaseManager.models";
 import { Competition } from "../models/competition.model";
 import { Logger } from "../models/common.models";
 import LoggerHelper from "../utils/logger";
+import { Timestamp } from "firebase-admin/firestore";
 
 class CompetitionManager {
   private logger!: Logger;
@@ -47,6 +48,26 @@ class CompetitionManager {
     };
 
     return competitionUpdatedData;
+  }
+
+  public async isCompetitionActive(competition_id: string): Promise<boolean> {
+    const document = await DatabaseManager.getRecordById<Competition>(
+      "COMPETITIONS_COLLECTIONS", 
+      "competition_id", 
+      competition_id
+    );
+
+    if(document === null)
+      return false
+
+    const startTime = document.start_time.seconds;
+    const endTime = document.end_time.seconds;
+    const currDate = Timestamp.now().seconds;
+    
+    if(currDate < startTime || currDate > endTime)
+      return false;
+
+    return true
   }
 }
 
