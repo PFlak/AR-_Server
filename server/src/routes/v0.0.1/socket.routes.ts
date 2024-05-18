@@ -5,6 +5,7 @@ import { CommonRoutesConfig } from "../../common/common.routes.config";
 import { APPLICATION_CONFIG } from "../../utils/configs/applicationConfig";
 import { authSocketMiddleware, parseSocketConnectionMiddleware } from "../../middlewares/socket.middleware";
 import { NextSocketFunction } from "../../models/common.models";
+import { setupCompetitionSocketConncetion } from "../../controllers/competitionRouter.controller";
 
 export class SocketRoutes extends CommonRoutesConfig {
 
@@ -36,7 +37,7 @@ export class SocketRoutes extends CommonRoutesConfig {
         if (APPLICATION_CONFIG.IS_MIDDLEWARE_ENABLE)
             this.setupSocketMiddleware();
 
-        // this.competitionNamespace.on("connection", setupCompetitionSocketConncetion);
+        this.competitionNamespace.on("connection", setupCompetitionSocketConncetion);
     }
 
     private setupSocketMiddleware(): void {
@@ -44,10 +45,6 @@ export class SocketRoutes extends CommonRoutesConfig {
         // this.competitionNamespace.use(authSocketMiddleware);
 
         this.competitionNamespace.use(parseSocketConnectionMiddleware);
-    }
-
-    checkRequiredParameters = (next: NextSocketFunction, roomID: string, userID: string, socketID: string) => {
-
     }
 
     rejectConnection = (next: NextSocketFunction, message: string) => {

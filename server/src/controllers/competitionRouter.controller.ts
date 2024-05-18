@@ -4,6 +4,7 @@ import { internalServerErrorResponse } from "../utils/responses/internalServerEr
 import CompetitionManager from "../managers/competitionManager";
 import { ErrorWithCode } from "../common/common.error.config";
 import { CompetitionNotFoundError } from "../utils/errors/errors.error";
+import { Socket } from "socket.io";
 
 export const getSpecificCompetitionHandler = async (
     req: Request,
@@ -30,3 +31,26 @@ export const getSpecificCompetitionHandler = async (
         return internalServerErrorResponse(res);
     };
 };
+
+export const setupCompetitionSocketConncetion = async (
+  socket: Socket
+) => {
+  setupComeptitionListeners(socket);
+};
+
+export const setupComeptitionListeners = (socket: Socket) => {
+
+  socket.on("positionControl", handlePositionControllListener);
+
+  socket.on("disconnect", handleClientDisconnect);
+};
+
+export const handlePositionControllListener = () => {
+  //TODO store
+  // CompetitionManager.storePosition()
+}
+
+export const handleClientDisconnect = () => {
+  
+  // CompetitionManager.storePositionToDatabase();
+}

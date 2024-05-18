@@ -8,3 +8,7 @@ export type NextSocketFunction = (err?: ExtendedError) => void;
 export type ErrorCodes = typeof ERROR_CODES;
 export type ErrorCodesKeys = keyof ErrorCodes;
 
+export type Position = {
+  latitude: number;
+  longtitude: number;
+}

@@ -42,10 +42,13 @@ export const parseSocketConnectionMiddleware = async (
 
     const competitionID = await competitionIdParser.parseAsync(socket.handshake.query.competitionID);
 
-    console.log(competitionID)
-    console.log(await CompetitionManager.isCompetitionActive(competitionID))
+    await CompetitionManager.isCompetitionActive(competitionID);
   } catch(error){
-    console.log("first")
+    
+    if(error instanceof ErrorWithCode){
+      next(error);
+    }
+    
     next(new Error());
   }
 }

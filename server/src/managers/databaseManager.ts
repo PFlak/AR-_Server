@@ -1,4 +1,4 @@
-import { getFirestore } from "firebase-admin/firestore";
+import { GeoPoint, getFirestore } from "firebase-admin/firestore";
 import { FirebaseHelper } from "../utils/helpers/firebaseHelper";
 import { initalizeFirebase } from "../firebase";
 import { DatabaseManagerConfig } from "../utils/configs/databaseManagerConfig";
@@ -140,6 +140,33 @@ class DatabaseManager {
             this.logger.error(error);
         }
     }
+
+    public async storeCompetitionStage(
+      positions: Record<string, any>,
+      competitionID: string,
+      teamID: string
+    ){
+      const collection = await this.getCollection("COMPETITIONS_COLLECTIONS");
+      
+      const subCollections = await collection.doc(competitionID).listCollections();
+
+      let competitionStages = null;
+
+      for(let i=0; i<subCollections.length; i++){
+        if(subCollections[i].id === "CompetitionStages"){
+          competitionStages = subCollections[i];
+        }
+      }
+
+      if(competitionStages === null) return;
+
+      console.log((await competitionStages.get()).docs[0].data())
+
+      await competitionStages.add({
+        geoPoints: positions,
+        team_id: teamID
+      })
+    };
 }
 
 const instance = new DatabaseManager();
