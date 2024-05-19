@@ -23,3 +23,9 @@ export class MissingParametersErros extends ErrorWithCode {
         super(`Missing parameters`, 404, "MISSING_PARAMETERS")
     }
 }
+
+export class CompetitionNotAcitve extends ErrorWithCode {
+  constructor(){
+      super(`Competition Not Active`, 404, "COMPETITION_NOT_ACTIVE");
+  }
+}

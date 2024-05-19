@@ -18,3 +18,4 @@ export const competitionSchema = z.object({
 });
 
 export const competitionIdParser = z.string().min(1);
+export const teamIdParser = z.string().min(1);

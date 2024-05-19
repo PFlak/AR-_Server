@@ -6,6 +6,7 @@ import { Collection, CollectionsList, RecordValue } from "../models/databaseMana
 import { Logger } from "../models/common.models";
 import loggerHelper from "../utils/logger";
 import { COLLECTION_NAMES } from "../models/databaseManager.models";
+import { firestore } from "firebase-admin";
 
 class DatabaseManager {
     private config!: typeof DatabaseManagerConfig;
@@ -144,6 +145,7 @@ class DatabaseManager {
     public async storeCompetitionStage(
       positions: Record<string, any>,
       competitionID: string,
+      stageID: string,
       teamID: string
     ){
       const collection = await this.getCollection("COMPETITIONS_COLLECTIONS");
@@ -160,13 +162,44 @@ class DatabaseManager {
 
       if(competitionStages === null) return;
 
-      console.log((await competitionStages.get()).docs[0].data())
+      const resultsCollections = await competitionStages.doc(stageID).listCollections();
 
-      await competitionStages.add({
-        geoPoints: positions,
-        team_id: teamID
-      })
+      let resultCollection = null;
+
+      for(let i=0; i<resultsCollections.length; i++){
+        if(resultsCollections[i].id === "Results"){
+          resultCollection = resultsCollections[i];
+        }
+      }
+
+      if(resultCollection === null) return;
+
+      resultCollection.doc(teamID).set(positions);
     };
+
+    public getNewDocuemntID(): string {
+      return this.db.collection("UsersCollections").doc().id
+    }
+
+    public async addToCompetitionTeams(
+      competitionID: string,
+      teamID: string,
+      data: Record<string, any>
+    ): Promise<void> {  
+      const collection = await this.getCollection("COMPETITIONS_COLLECTIONS");
+      const subCollections = await collection.doc(competitionID).listCollections();
+      let competitionTeams = null;
+
+      for(let i=0; i<subCollections.length; i++){
+        if(subCollections[i].id === "CompetitionTeams"){
+          competitionTeams = subCollections[i];
+        }
+      }
+
+      if(competitionTeams === null) return;
+
+      await competitionTeams.doc(teamID).set(data);
+    } 
 }
 
 const instance = new DatabaseManager();
