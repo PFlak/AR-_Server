@@ -5,7 +5,9 @@ import { NextSocketFunction } from "../models/common.models";
 import { FirebaseHelper } from "../utils/helpers/firebaseHelper";
 import { DecodedToken } from "../models/user.model";
 import CompetitionManager from "../managers/competitionManager";
-import { competitionIdParser } from "../utils/schemas/competition.schema";
+import { compeittionStageParser, competitionIdParser, teamIdParser } from "../utils/schemas/competition.schema";
+import DatabaseManager from "./../managers/databaseManager";
+import { EventsManager } from "../managers/eventsManager";
 
 export const authSocketMiddleware = async (
     socket: Socket,
@@ -39,16 +41,29 @@ export const parseSocketConnectionMiddleware = async (
   next: NextSocketFunction
 ) => {
   try {
-
-    const competitionID = await competitionIdParser.parseAsync(socket.handshake.query.competitionID);
-
-    await CompetitionManager.isCompetitionActive(competitionID);
-  } catch(error){
     
+    const competitionID = await competitionIdParser.parseAsync(socket.handshake.query.competitionID);
+    const stage_id = await compeittionStageParser.parseAsync(socket.handshake.query.stageID);
+
+    if(await CompetitionManager.isStageValid(competitionID, stage_id) === false){
+      throw new Error();
+    }
+
+    const teamID = DatabaseManager.getNewDocuemntID();
+
+    socket.handshake.query.teamID = teamID;
+    
+    EventsManager.sendMessage(socket, "InitialMessage", { teamID });
+
+    CompetitionManager.addTeamToCompetition(competitionID, teamID);
+
+    next();
+  } catch(error){
     if(error instanceof ErrorWithCode){
       next(error);
     }
-    
     next(new Error());
+
+    socket.disconnect();
   }
 }

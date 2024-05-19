@@ -1,14 +1,15 @@
-import { CompetitionNotFoundError } from "../utils/errors/errors.error";
+import { CompetitionNotAcitve, CompetitionNotFoundError } from "../utils/errors/errors.error";
 import DatabaseManager from "./databaseManager";
 import { DatabaseHelper } from "../utils/helpers/databaseHelper";
 import { COLLECTION_NAMES } from "../models/databaseManager.models";
-import { Competition } from "../models/competition.model";
-import { Logger } from "../models/common.models";
+import { Competition, CompetitionPositions } from "../models/competition.model";
+import { Logger, Position } from "../models/common.models";
 import LoggerHelper from "../utils/logger";
-import { Timestamp } from "firebase-admin/firestore";
+import { GeoPoint, Timestamp } from "firebase-admin/firestore";
 
 class CompetitionManager {
   private logger!: Logger;
+  private competitionPositions: CompetitionPositions = {};
 
   constructor() {
     this.init();
@@ -58,7 +59,7 @@ class CompetitionManager {
     );
 
     if(document === null)
-      return false
+      throw new CompetitionNotFoundError();
 
     const startTime = document.start_time.seconds;
     const endTime = document.end_time.seconds;
@@ -68,6 +69,57 @@ class CompetitionManager {
       return false;
 
     return true
+  }
+
+  public async startCompetition(competition_id: string): Promise<void>{
+    
+    this.competitionPositions[competition_id] = {};
+  }
+
+  public async addTeamToCompetition(competition_id: string, team_id: string): Promise<void> {
+    
+    if(typeof this.competitionPositions[competition_id] === "undefined"){
+      throw new CompetitionNotAcitve();
+    }
+
+    await DatabaseManager.addToCompetitionTeams(competition_id, team_id, { users: ["User1"] });
+    
+    this.competitionPositions[competition_id][team_id] = [];
+  }
+
+  public isTeamInCompetition(competition_id: string, team_id: string): boolean {
+    if(typeof this.competitionPositions[competition_id] === "undefined"){
+      throw new CompetitionNotAcitve();
+    }
+
+    return (typeof this.competitionPositions[competition_id][team_id] === "undefined");
+  }
+
+  public async storePosition(competition_id: string, team_id: string, position: Position) {
+    if(await this.isCompetitionActive(competition_id) === false)
+      return;
+
+    if(this.isTeamInCompetition(competition_id, team_id) === false)
+      return;
+    
+    this.competitionPositions[competition_id][team_id].push(position);
+  }
+
+  public async storePositionsToDatabase(competition_id: string, team_id: string, stage_id: string): Promise<void> {
+    const positions = this.competitionPositions[competition_id][team_id];
+    
+    if(positions.length === 0)
+      return;
+
+    const validFormatPositions = positions.map((item) => {
+      return new GeoPoint(item.latitude, item.longtitude);
+    })
+    
+    DatabaseManager.storeCompetitionStage(validFormatPositions, competition_id, stage_id, team_id);
+  }
+
+  public async isStageValid(competition_id: string, stage_id: string): Promise<boolean>{
+    return await DatabaseManager.isStageExist(competition_id, stage_id);
   }
 }
 

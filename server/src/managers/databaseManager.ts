@@ -200,6 +200,33 @@ class DatabaseManager {
 
       await competitionTeams.doc(teamID).set(data);
     } 
+
+    public async isStageExist(
+      competition_id: string,
+      stage_id: string
+    ): Promise<boolean>{
+      const collection = await this.getCollection("COMPETITIONS_COLLECTIONS");
+      const subCollections = await collection.doc(competition_id).listCollections();
+      let competitionStages = null;
+
+      for(let i=0; i<subCollections.length; i++){
+        if(subCollections[i].id === "CompetitionStages"){
+          competitionStages = subCollections[i];
+        }
+      }
+
+      if(competitionStages === null) return false;
+      
+      const stages = await (await competitionStages.get()).docs;
+      
+      for(let i=0; i< stages.length; i++){
+        if(stages[i].id === stage_id){
+          return true
+        }
+      }
+
+      return false
+    } 
 }
 
 const instance = new DatabaseManager();

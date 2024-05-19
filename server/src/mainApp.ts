@@ -13,6 +13,8 @@ import { initalizeFirebase } from "./firebase";
 import { AuthRoutes } from "./routes/v0.0.1/auth.routes";
 import { SocketRoutes } from "./routes/v0.0.1/socket.routes";
 import { Server } from "socket.io";
+import DatabaseManager from "./managers/databaseManager" // For tests
+import CompetitionManager from "./managers/competitionManager";
 
 export class MainApp {
 
@@ -35,6 +37,7 @@ export class MainApp {
         this.initApplicationAndServer();
         this.initBasicDebug();
         this.initRoutes();
+        this.startCompetitions();
 
         this.startServer();
     }
@@ -82,6 +85,10 @@ export class MainApp {
         this.routes.push(new ExampleRoute(application));
         this.routes.push(new SocketRoutes(application, this.serverIO));
         this.routes.push(new NotValidRoutes(application));
+    }
+
+    private startCompetitions(): void {
+      CompetitionManager.startCompetition("TFOxaFOwaq6rzSJo2GEr")
     }
 
     private startServer(): void {

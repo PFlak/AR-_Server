@@ -43,7 +43,6 @@ export class SocketRoutes extends CommonRoutesConfig {
     private setupSocketMiddleware(): void {
 
         // this.competitionNamespace.use(authSocketMiddleware);
-
         this.competitionNamespace.use(parseSocketConnectionMiddleware);
     }
 

@@ -12,4 +12,4 @@ export type ErrorCodesKeys = keyof ErrorCodes;
 export type Position = {
   latitude: number;
   longtitude: number;
-} | GeoPoint
+};

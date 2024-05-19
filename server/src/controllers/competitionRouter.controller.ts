@@ -5,6 +5,8 @@ import CompetitionManager from "../managers/competitionManager";
 import { ErrorWithCode } from "../common/common.error.config";
 import { CompetitionNotFoundError } from "../utils/errors/errors.error";
 import { Socket } from "socket.io";
+import { GeoPoint, Timestamp } from "firebase-admin/firestore";
+import { PositionControlEvent } from "../models/competition.model";
 
 export const getSpecificCompetitionHandler = async (
     req: Request,
@@ -42,15 +44,21 @@ export const setupComeptitionListeners = (socket: Socket) => {
 
   socket.on("positionControl", handlePositionControllListener);
 
-  socket.on("disconnect", handleClientDisconnect);
+  socket.on("disconnect",  () => {
+
+    const competition_id = socket.handshake.query.competitionID as string;
+    const team_id = socket.handshake.query.teamID as string;
+    const stage_id = socket.handshake.query.stage_id as string;
+
+    CompetitionManager.storePositionsToDatabase(competition_id, team_id, stage_id);
+  });
 };
 
-export const handlePositionControllListener = () => {
-  //TODO store
-  // CompetitionManager.storePosition()
-}
-
-export const handleClientDisconnect = () => {
+export const handlePositionControllListener = (data: PositionControlEvent) => {
   
-  // CompetitionManager.storePositionToDatabase();
+  const positions = data.geoPoint;
+  const team_id = data.team_id;
+  const competition_id = data.competition_id;
+  
+  CompetitionManager.storePosition(competition_id, team_id, positions);
 }
